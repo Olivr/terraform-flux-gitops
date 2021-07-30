@@ -7,21 +7,6 @@ variable "clusters" {
     kube_host           = string
     kube_token          = string
     kube_ca_certificate = string
-    base_dir            = string
-    cluster_path        = string
-    namespaces          = set(string)
-    deploy_keys = map(object({
-      name        = string
-      namespace   = string
-      known_hosts = string
-      public_key  = string
-      private_key = string
-    }))
-    secrets = map(object({
-      name       = string
-      namespace  = string
-      data       = map(string)
-    }))
   }))
 }
 
@@ -36,9 +21,9 @@ variable "sensitive_inputs_per_cluster" {
   }
   validation {
     error_message = "Null values are not accepted. Use empty values instead."
-    condition     = alltrue(flatten(
+    condition = alltrue(flatten(
       [for sensitive_inputs in values(var.sensitive_inputs_per_cluster) :
-        [for v in values(sensitive_inputs): v != null]
+        [for v in values(sensitive_inputs) : v != null]
       ]
     ))
   }
